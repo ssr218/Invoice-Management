@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Development Notes / Thinking Process
 
 Just keeping track of some decisions I made while building this.
@@ -37,6 +37,4 @@ Kept it super simple. Hardcoded credentials in the controller.
 - **Pagination**: Currently just dumping all invoices. Would break if we had 1000s.
 - **Tax Calculation**: Everything is flat amount right now. 
 - **PDF Export**: Users probably want to download the invoice. 
-=======
 
->>>>>>> cbc81f4313b2f616e62207eca982bd9d20f0f2e9
