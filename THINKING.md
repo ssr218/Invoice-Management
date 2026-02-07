@@ -1,30 +1,38 @@
-# Thinking Process - Invoice Management System
+# Development Notes / Thinking Process
 
-## 1. Design Decision: Modular Folder Structure
+Just keeping track of some decisions I made while building this.
 
-**Decision**: Splitting the backend into `routes/`, `controllers/`, and `middleware/`.
-**Why**: Even for an intern-level project, this "Clean Architecture" approach separates the entry point (routes) from the business logic (controllers). It makes the codebase much easier to navigate and scale compared to keeping all logic in a single file like `server.js`.
+## 1. Backend Structure
 
-## 2. Alternative Approach Considered: Redux for State Management
+Initially thought about just dumping everything in `server.js` since it's a small app, but that gets messy fast. Went with a standard `controllers` + `routes` split. 
 
-**Alternative**: Using Redux to manage the invoice list and authentication state globally.
-**Why Chosen/Not Chosen**: While Redux is powerful for complex apps, I chose **not** to use it. For this assignment, React's built-in `useState` and `useEffect` are sufficient. Adding Redux would have introduced unnecessary boilerplate and violated the "do not over-engineer" constraint.
+- **Why**: Cleaner. Easier to test. 
+- **Trade-off**: Slightly more boilerplate, but worth it if we ever add more features.
 
-## 3. Guide: Adding `tax_amount`
+Also split `app.js` and `server.js` so I can test the app without starting the server port listener every time.
 
-If we were to add a `tax_amount` field to the system, the following changes would be required:
+## 2. Database Choice
 
-### Prisma Schema & Migration
-- Add `taxAmount Float @default(0)` to the `Invoice` model in `schema.prisma`.
-- Run `npx prisma migrate dev --name add_tax_amount` to update the SQLite database.
+Used SQLite because setting up Postgres for a simple local assessment is overkill.
 
-### Backend API Changes
-- Update `invoice.controller.js`:
-  - In `createInvoice`, extract `taxAmount` from `req.body` and include it in the `prisma.invoice.create` call.
-  - In `updateInvoice`, include `taxAmount` in the update data.
-  - Ensure the math for "Total Amount" respects whether `invoiceAmount` is inclusive or exclusive of tax.
+- **The Enumeration Issue**: SQLite doesn't support native Enums. 
+- **Fix**: Defined `status` as a String in Prisma schema (`@default("UNPAID")`), but enforced the 'PAID'/'UNPAID' check in the controller. It's safe enough for this.
 
-### Frontend UI & Logic Changes
-- **InvoiceForm.jsx**: Add a new input field for "Tax Amount". Update the `formData` state to include it.
-- **InvoiceList.jsx**: Add a "Tax" column to the table to display this value for each invoice.
-- **Dashboard.jsx**: Potentially add a "Total Tax Collected" stat card by aggregating the `taxAmount` from the fetched list.
+## 3. Frontend & Styling
+
+Avoided Tailwind this time. Just used native CSS variables (`src/styles.css`). 
+
+- **Why**: Wanted to show I understand CSS and not just classes.
+- **The "Boring" Aesthetic**: The goal was "Enterprise Internal Tool". So I removed all the drop shadows, rounded corners, and gradients. Flat designs look more trustworthy for finance apps.
+
+## 4. Auth
+
+Kept it super simple. Hardcoded credentials in the controller. 
+- Obviously wouldn't do this in prod, but for a demo, a `users` table is unnecessary complexity.
+- JWT is still real though. Middleware checks the token on every invoice route.
+
+## 5. Future Improvements (If I had more time)
+
+- **Pagination**: Currently just dumping all invoices. Would break if we had 1000s.
+- **Tax Calculation**: Everything is flat amount right now. 
+- **PDF Export**: Users probably want to download the invoice. 
