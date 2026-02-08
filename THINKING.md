@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 # Dev Thoughts & Notes
+=======
+
+# Development Notes / Thinking Process
+>>>>>>> 20401b9df5ef836ff9006fa2059d37c65db0690a
 
 Just dumping some context on why I built things this way.
 
@@ -38,7 +43,22 @@ SQLite doesn't do Enums.
 -   Building a whole Sign Up / Forgot Password flow seemed like a waste of time for a demo about *Invoices*.
 -   **But**: The security *mechanism* is real. It still issues a JWT, and the frontend still checks that token. So swapping in a real database user later would be easy.
 
+<<<<<<< HEAD
 ## 5. If I had more time...
 1.  **Pagination**: Definitely need this. Right now `findMany()` pulls everything.
 2.  **PDFs**: Clients usually want to download the actual PDF invoice.
 3.  **Real Auth**: bcrypt, user tables, etc.
+=======
+## 4. Auth
+
+Kept it super simple. Hardcoded credentials in the controller. 
+- Obviously wouldn't do this in prod, but for a demo, a `users` table is unnecessary complexity.
+- JWT is still real though. Middleware checks the token on every invoice route.
+
+## 5. Future Improvements (If I had more time)
+
+- **Pagination**: Currently just dumping all invoices. Would break if we had 1000s.
+- **Tax Calculation**: Everything is flat amount right now. 
+- **PDF Export**: Users probably want to download the invoice. 
+
+>>>>>>> 20401b9df5ef836ff9006fa2059d37c65db0690a
