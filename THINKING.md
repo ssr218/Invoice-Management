@@ -1,9 +1,9 @@
-<<<<<<< HEAD
+
 # Dev Thoughts & Notes
-=======
+
 
 # Development Notes / Thinking Process
->>>>>>> 20401b9df5ef836ff9006fa2059d37c65db0690a
+
 
 Just dumping some context on why I built things this way.
 
@@ -61,4 +61,3 @@ Kept it super simple. Hardcoded credentials in the controller.
 - **Tax Calculation**: Everything is flat amount right now. 
 - **PDF Export**: Users probably want to download the invoice. 
 
->>>>>>> 20401b9df5ef836ff9006fa2059d37c65db0690a
