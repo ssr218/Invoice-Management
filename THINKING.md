@@ -1,42 +1,44 @@
-<<<<<<< HEAD
-# Development Notes / Thinking Process
+# Dev Thoughts & Notes
 
-Just keeping track of some decisions I made while building this.
+Just dumping some context on why I built things this way.
 
-## 1. Backend Structure
+## 1. The Stack (PERN-ish)
 
-Initially thought about just dumping everything in `server.js` since it's a small app, but that gets messy fast. Went with a standard `controllers` + `routes` split. 
+-   **Frontend**: React + Vite. It's fast, default choice.
+-   **Backend**: Node/Express. Kept it simple.
+-   **DB**: SQLite with Prisma.
+    -   Honestly, setting up Postgres for a local review is a pain. SQLite works out of the box.
+    -   Prisma is great because if we *did* switch to Postgres, it's like a 2-line config change.
 
-- **Why**: Cleaner. Easier to test. 
-- **Trade-off**: Slightly more boilerplate, but worth it if we ever add more features.
+## 2. Backend Logic
 
-Also split `app.js` and `server.js` so I can test the app without starting the server port listener every time.
+Split it into `controllers` and `routes`.
+-   I hate massive `server.js` files.
+-   Keeps the actual logic separate from the URL definitions.
 
-## 2. Database Choice
+### The Enum Problem
+SQLite doesn't do Enums.
+-   I wanted strict `PAID` / `UNPAID` statuses.
+-   **Fix**: Left it as a String in the DB, but added a check in the controller to throw an error if you try to save anything else. Good enough for now.
 
-Used SQLite because setting up Postgres for a simple local assessment is overkill.
+## 3. Frontend Stuff
 
-- **The Enumeration Issue**: SQLite doesn't support native Enums. 
-- **Fix**: Defined `status` as a String in Prisma schema (`@default("UNPAID")`), but enforced the 'PAID'/'UNPAID' check in the controller. It's safe enough for this.
+### CSS
+-   Didn't use Tailwind. Partly to show I know actual CSS, partly because setting up the config for a small app feels like overkill.
+-   **Design**: Went for a "boring internal tool" vibe. No round corners, high contrast. It's an invoice app, not a social network.
 
-## 3. Frontend & Styling
+### Dashboard Stats
+-   The dashboard needs totals (Paid vs Unpaid).
+-   Instead of making 5 different API calls, I just grab all invoices in one go and calculate the totals in the controller.
+-   *Note*: This would be a bad idea if we had 10,000 invoices (would crash the server memory), but for <1000 items, it's way faster to develop.
 
-Avoided Tailwind this time. Just used native CSS variables (`src/styles.css`). 
+## 4. Auth (The "Lazy" Part)
 
-- **Why**: Wanted to show I understand CSS and not just classes.
-- **The "Boring" Aesthetic**: The goal was "Enterprise Internal Tool". So I removed all the drop shadows, rounded corners, and gradients. Flat designs look more trustworthy for finance apps.
+-   It's hardcoded (`admin@example.com`).
+-   Building a whole Sign Up / Forgot Password flow seemed like a waste of time for a demo about *Invoices*.
+-   **But**: The security *mechanism* is real. It still issues a JWT, and the frontend still checks that token. So swapping in a real database user later would be easy.
 
-## 4. Auth
-
-Kept it super simple. Hardcoded credentials in the controller. 
-- Obviously wouldn't do this in prod, but for a demo, a `users` table is unnecessary complexity.
-- JWT is still real though. Middleware checks the token on every invoice route.
-
-## 5. Future Improvements (If I had more time)
-
-- **Pagination**: Currently just dumping all invoices. Would break if we had 1000s.
-- **Tax Calculation**: Everything is flat amount right now. 
-- **PDF Export**: Users probably want to download the invoice. 
-=======
-
->>>>>>> cbc81f4313b2f616e62207eca982bd9d20f0f2e9
+## 5. If I had more time...
+1.  **Pagination**: Definitely need this. Right now `findMany()` pulls everything.
+2.  **PDFs**: Clients usually want to download the actual PDF invoice.
+3.  **Real Auth**: bcrypt, user tables, etc.
